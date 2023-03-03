@@ -1,0 +1,166 @@
+﻿@model IEnumerable<Rentiva.Models.Product>
+@{
+    ViewData["Title"] = "Index";
+}
+<style>
+
+    input[type="button"] {
+        transition: all .3s;
+        border: 1px solid;
+        border-color:mediumpurple;
+        padding: 8px 16px;
+        text-decoration: none;
+        border-radius: 0px;
+        font-size: 15px;
+    }
+
+    input[type="button"]:not(.active) {
+        background-color: transparent;
+    }
+
+    .active {
+        background-color: white;
+        color: mediumpurple;
+    }
+
+    input[type="button"]:hover:not(.active) {
+        background-color: mediumpurple;
+    }
+</style>
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h2 class="text-primary">Product</h2>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="Product" asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i>&nbsp; Create a New Product
+            </a>
+        </div>
+    </div>
+    <br />
+    <table id="DataTableResult" class="table table-bordered table-striped border-1 rounded-circle" style="text-align: inherit; vertical-align: middle;">
+    <thead>
+            <tr>
+            <th>
+                Product Name
+            </th>
+            <th>
+               Category
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var obj in Model)
+        {
+                <tr>
+                    <td hidden id="ProductId">@obj.Id</td>
+                    <td id="ProductName+@obj.Id" class="bi bi-pencil-fill" onkeypress="handle(event,@obj.Id)" style="width:30%; height:30%; max-width: 50px;max-height: 50px;" contenteditable="true">
+                        @obj.Name
+                    </td>
+                    <td>
+                        <select contenteditable="true" id="CategoryId+@obj.Id" asp-for="@obj.CategoryId" class="form-control" asp-items="@(ViewData["CategoryList"] as IEnumerable<SelectListItem>)">
+                            <option selected disabled>Select a category</option>
+                        </select>
+                    
+                        </td>
+                <td>
+                    <div class="w-75 btn-group" role="group">
+                            <a id="@obj.Id" asp-controller="Product" onclick="SaveChanges(this.id)" asp-route-id="@obj.Id"
+                           class="btn btn-success mx-3"> <i class="bi bi-database-fill-up"></i>Save</a>
+
+                            <a asp-controller="Product" asp-action="Edit" asp-route-id="@obj.Id"
+                           class="btn btn-info mx-3"><i class="bi bi-pencil-square"></i>Edit</a>
+                            <a asp-controller="Product" asp-action="Delete" asp-route-id="@obj.Id"
+                           class="btn btn-danger mx-3"> <i class="bi bi-trash-fill"></i>Delete</a>
+                            
+                           
+                    </div>
+                        
+                </td>
+            </tr>
+        }
+       
+    </tbody>
+</table>
+   
+    
+</div>
+<script type="text/javascript">
+    var $table = document.getElementById("DataTableResult"),
+        $n = 8,
+        $rowCount = $table.rows.length,
+        $firstRow = $table.rows[0].firstElementChild.tagName,
+        $hasHead = ($firstRow === "TH"),
+        $tr = [],
+        $i, $ii, $j = ($hasHead) ? 1 : 0,
+        $th = ($hasHead ? $table.rows[(0)].outerHTML : "");
+    var $pageCount = Math.ceil($rowCount / $n);
+
+    if ($pageCount > 1) {
+        for ($i = $j, $ii = 0; $i < $rowCount; $i++, $ii++)
+            $tr[$ii] = $table.rows[$i].outerHTML;
+        $table.insertAdjacentHTML("afterend", "<div id='buttons'></div");
+        sort(1);
+    }
+
+    function sort($p) {
+
+        var $rows = $th, $s = (($n * $p) - $n);
+        for ($i = $s; $i < ($s + $n) && $i < $tr.length; $i++)
+            $rows += $tr[$i];
+
+        $table.innerHTML = $rows;
+        document.getElementById("buttons").innerHTML = pageButtons($pageCount, $p);
+        document.getElementById("id" + $p).setAttribute("class", "active");
+    }
+
+    function pageButtons($pCount, $cur) {
+
+        var $prevDis = ($cur == 1) ? "disabled" : "",
+            $nextDis = ($cur == $pCount) ? "disabled" : "",
+
+            $buttons = "<input type='button' value='<< Prev' onclick='sort(" + ($cur - 1) + ")' " + $prevDis + ">";
+        for ($i = 1; $i <= $pCount; $i++)
+            $buttons += "<input type='button' id='id" + $i + "'value='" + $i + "' onclick='sort(" + $i + ")'>";
+        $buttons += "<input type='button' value='Next >>' onclick='sort(" + ($cur + 1) + ")' " + $nextDis + ">";
+        return $buttons;
+    }
+
+</script>
+<script type="text/javascript">
+    function SaveChanges(ProductId){
+        
+        
+        var ProductName = document.getElementById("ProductName+"+ProductId).innerText;
+        var CategoryId = document.getElementById("CategoryId+" + ProductId).value;
+        
+        $.ajax({
+            url: '/Product/UpdateProductDynamically',
+            type: 'POST',
+            async:true,
+            data: {
+                CategoryId: CategoryId,
+                ProductId: ProductId,
+                ProductName: ProductName
+            },
+            error: function (xhr) {
+                alert('Error: ' + xhr.statusText);
+            },
+            success: function (result) {
+                location.reload();
+            }
+            
+        });
+    }
+    
+</script>
+<script>
+    function handle(e,ProductId){
+        if(e.keyCode === 13){
+            e.preventDefault(); // Ensure it is only this code that runs
+
+            SaveChanges(ProductId);
+        }
+    }
+</script>

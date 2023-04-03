@@ -12,6 +12,7 @@ namespace StudentAdminPortal.API.Repositories
         public List<Student> GetStudents()
         {
             return _context.Student.ToList();
+            //test nasıl oldu
         }
     }
 }

@@ -9,7 +9,7 @@ builder.Services.AddCors((options) =>
 {
     options.AddPolicy("angularApplication", (builder) =>
     {
-        builder.WithOrigins("http://localhost:4200/")
+        builder.WithOrigins("http://localhost:4200")
         .AllowAnyHeader()
         .WithMethods("GET", "POST", "PUT", "DELETE")
         .WithExposedHeaders("*");

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using StudentAdminPortal.API.DomainModels;
 using StudentAdminPortal.API.Repositories;
 
@@ -8,31 +9,30 @@ namespace StudentAdminPortal.API.Controllers
     public class StudentController : Controller
     {
         public readonly IStudentRepository _studentRepository;
-        public StudentController(IStudentRepository studentRepository)
+        public readonly IMapper _mapper;
+        public StudentController(IStudentRepository studentRepository,IMapper mapper)
         {
             _studentRepository = studentRepository;
+            _mapper = mapper;
         }
         [HttpGet]
         [Route("[controller]")]
-        public IActionResult GetAllStudents()
+        public async Task<IActionResult> GetAllStudents()
         {
-            var students = _studentRepository.GetStudents();
-            var domainModelStudents = new List<Student>();
-            foreach (var student in students)
+            var students = await _studentRepository.GetStudentsAsync();
+            
+            return Ok(_mapper.Map<List<Student>>(students));
+        }
+        [HttpGet]
+        [Route("[controller]/{studentId:guid}")]
+        public async Task<IActionResult> GetStudent([FromRoute] Guid studentId)
+        {
+            var student = await _studentRepository.GetStudentAsync(studentId);
+            if (student==null)
             {
-                domainModelStudents.Add(new Student
-                {
-                    Id = student.Id,
-                    FirstName = student.FirstName,
-                    LastName = student.LastName,
-                    DateOfBirth = student.DateOfBirth,
-                    Email = student.Email,
-                    Mobile = student.Mobile,
-                    ProfileImageUrl = student.ProfileImageUrl,
-                    GenderId = student.GenderId
-                });
+                return NotFound();
             }
-           return Ok(domainModelStudents);
+            return Ok(student);
         }
     }
 }

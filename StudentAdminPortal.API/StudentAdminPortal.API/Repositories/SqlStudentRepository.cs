@@ -1,4 +1,6 @@
-﻿using StudentAdminPortal.API.DataModels;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using StudentAdminPortal.API.DataModels;
 
 namespace StudentAdminPortal.API.Repositories
 {
@@ -9,9 +11,15 @@ namespace StudentAdminPortal.API.Repositories
         {
             _context= context;
         }
-        public List<Student> GetStudents()
+
+        public async Task<Student> GetStudentAsync(Guid studentId)
         {
-            return _context.Student.ToList();
+            return await _context.Student.Where(p => p.Id == studentId).FirstOrDefaultAsync();
+        }
+
+        public async Task<List<Student>> GetStudentsAsync()
+        {
+            return  await _context.Student.ToListAsync();
             //test nasıl oldu
         }
     }

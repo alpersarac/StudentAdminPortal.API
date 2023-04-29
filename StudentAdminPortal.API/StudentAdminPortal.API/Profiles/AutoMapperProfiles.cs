@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using StudentAdminPortal.API.DataModels;
-using DataModels=StudentAdminPortal.API.DomainModels;
+using DataModels = StudentAdminPortal.API.DataModels;
+using StudentAdminPortal.API.DomainModels;
 
 namespace StudentAdminPortal.API.Profiles
 {
@@ -13,6 +13,7 @@ namespace StudentAdminPortal.API.Profiles
             CreateMap<DataModels.Gender, Gender>();
 
             CreateMap<DataModels.Address, Address>();
+
         }
     }
 }

@@ -19,9 +19,18 @@ namespace StudentAdminPortal.API.Controllers
         [Route("[controller]")]
         public async Task<IActionResult> GetAllStudents()
         {
-            var students = await _studentRepository.GetStudentsAsync();
-            
-            return Ok(_mapper.Map<List<Student>>(students));
+            try
+            {
+                var students = await _studentRepository.GetStudentsAsync();
+                var ww = _mapper.Map<List<Student>>(students);
+                return Ok(ww);
+            }
+            catch (Exception ex)
+            {
+
+                return null;
+            }
+           
         }
         [HttpGet]
         [Route("[controller]/{studentId:guid}")]
@@ -32,7 +41,7 @@ namespace StudentAdminPortal.API.Controllers
             {
                 return NotFound();
             }
-            return Ok(student);
+            return Ok(_mapper.Map<Student>(student));
         }
     }
 }

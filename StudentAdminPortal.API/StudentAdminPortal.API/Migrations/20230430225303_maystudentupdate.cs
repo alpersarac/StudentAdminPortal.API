@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace StudentAdminPortal.API.Migrations
 {
     /// <inheritdoc />
-    public partial class cleanmig : Migration
+    public partial class maystudentupdate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -52,8 +52,8 @@ namespace StudentAdminPortal.API.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PhysicalAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PostalAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhysicalAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PostalAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     StudentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>

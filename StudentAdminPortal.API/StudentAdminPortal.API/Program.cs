@@ -22,6 +22,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<StudentAdminContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("StudentAdminPortalDb")));
 builder.Services.AddScoped<IStudentRepository, SqlStudentRepository>();
+builder.Services.AddScoped<IImageRepository, LocalStorageImageRepository>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

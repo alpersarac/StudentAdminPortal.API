@@ -7,10 +7,10 @@
             var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"Resources\Images", fileName);
             using Stream fileStream = new FileStream(filePath, FileMode.Create);
             await file.CopyToAsync(fileStream);
-            return getServerRelativePath(filePath);
+            return GetServerRelativePath(filePath);
         }
 
-        private string getServerRelativePath(string fileName)
+        private string GetServerRelativePath(string fileName)
         {
             return Path.Combine(@"Resources\Images", fileName);
         }

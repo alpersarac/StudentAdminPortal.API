@@ -13,10 +13,11 @@ namespace StudentAdminPortal.API.Controllers
         public readonly IStudentRepository _studentRepository;
         public readonly IMapper _mapper;
         public readonly IImageRepository _ImageRepository;
-        public StudentController(IStudentRepository studentRepository, IMapper mapper)
+        public StudentController(IStudentRepository studentRepository, IMapper mapper, IImageRepository imageRepository)
         {
             _studentRepository = studentRepository;
             _mapper = mapper;
+            _ImageRepository = imageRepository;
         }
         [HttpGet]
         [Route("[controller]")]

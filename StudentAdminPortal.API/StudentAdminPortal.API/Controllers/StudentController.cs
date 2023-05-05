@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using StudentAdminPortal.API.DataModels;
 using StudentAdminPortal.API.DomainModels;
 using StudentAdminPortal.API.Repositories;
+using System.Linq;
 using Student = StudentAdminPortal.API.DomainModels.Student;
 
 namespace StudentAdminPortal.API.Controllers
@@ -80,15 +81,31 @@ namespace StudentAdminPortal.API.Controllers
         [Route("[controller]/{studentId:guid}/upload-image")]
         public async Task<IActionResult> UploadImage([FromRoute] Guid studentId,IFormFile profileImage)
         {
-            if (await _studentRepository.Exists(studentId))
+            var validExntensions= new List<string>
             {
-                var filneName = Guid.NewGuid() + Path.GetExtension(profileImage.FileName);
-                var fileImagePath = await _ImageRepository.Upload(profileImage, filneName);
-                if (await _studentRepository.UpdateProfileImage(studentId, fileImagePath))
+                ".jpeg",
+                ".png",
+                ".gif",
+                ".jpg"
+            };
+
+            if (profileImage!=null&& profileImage.Length>0)
+            {
+                var extention = Path.GetExtension(profileImage.FileName);
+                if (validExntensions.Contains(extention))
                 {
-                    return Ok(fileImagePath);
+                    if (await _studentRepository.Exists(studentId))
+                    {
+                        var filneName = Guid.NewGuid() + Path.GetExtension(profileImage.FileName);
+                        var fileImagePath = await _ImageRepository.Upload(profileImage, filneName);
+                        if (await _studentRepository.UpdateProfileImage(studentId, fileImagePath))
+                        {
+                            return Ok(fileImagePath);
+                        }
+                        return StatusCode(StatusCodes.Status500InternalServerError, "Error uploading image");
+                    }
                 }
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error uploading image");
+                return BadRequest("This is not a valid Image format");
             }
             return NotFound();
         }
